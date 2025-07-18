@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Timezone Converter</title>
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f9f9f9;}
+    label { display: block; margin: 10px 0 5px;}
+    select, input { font-size: 1em; padding: 5px;}
+    .container { background: #fff; padding: 20px; border-radius: 8px; max-width: 400px;}
+    .result { margin-top: 20px; font-weight: bold;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Timezone Converter</h2>
+    <label for="datetime">Date &amp; Time:</label>
+    <input type="datetime-local" id="datetime">
+
+    <label for="fromZone">From Timezone:</label>
+    <select id="fromZone">
+      <option value="America/New_York">EST (America/New_York)</option>
+      <option value="Asia/Kolkata">IST (Asia/Kolkata)</option>
+      <option value="Australia/Sydney">AEST (Australia/Sydney)</option>
+    </select>
+
+    <label for="toZone">To Timezone:</label>
+    <select id="toZone" disabled>
+      <option value="UTC">UTC</option>
+    </select>
+
+    <button id="convertBtn" style="margin-top:15px;">Convert</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const { DateTime } = luxon;
+
+    document.getElementById("convertBtn").onclick = function() {
+      const inputDate = document.getElementById("datetime").value;
+      const fromZone = document.getElementById("fromZone").value;
+      const toZone = "UTC";
+      const resultDiv = document.getElementById("result");
+
+      if (!inputDate) {
+        resultDiv.textContent = "Please enter a date and time.";
+        return;
+      }
+
+      // Parse input as fromZone local time
+      const fromDT = DateTime.fromISO(inputDate, { zone: fromZone });
+
+      if (!fromDT.isValid) {
+        resultDiv.textContent = "Invalid date or time.";
+        return;
+      }
+
+      // Convert to UTC
+      const toDT = fromDT.setZone(toZone);
+
+      resultDiv.textContent =
+        `Converted: ${toDT.toFormat('yyyy-LL-dd HH:mm:ss')} (UTC)`;
+    };
+  </script>
+</body>
+</html>
